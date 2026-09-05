@@ -66,7 +66,7 @@ mysql> SELECT * FROM COUNTRIES_DETAILS;
 +------------+--------------+-----------+
 20 rows in set (0.00 sec)
 
-//01
+//01 CREATE TABLE countries
 
 mysql> CREATE DATABASE countries;
 Query OK, 1 row affected (0.00 sec)
@@ -79,7 +79,7 @@ mysql> CREATE TABLE countries (
     -> );
 Query OK, 0 rows affected (0.01 sec)
 
-//02
+//02 CREATE TABLE IF NOT EXISTS 
 mysql> CREATE TABLE IF NOT EXISTS countries (
     ->     country_id INT,
     ->     country_name VARCHAR(40),
@@ -87,9 +87,68 @@ mysql> CREATE TABLE IF NOT EXISTS countries (
     -> );
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 
-//03
+//03 DUPLICATE
 mysql> CREATE TABLE dup_countries
     -> LIKE countries;
 Query OK, 0 rows affected (0.01 sec)
+
+//04 DUPLICATE COPY INCLUDNG STRUCTURE AND DATA
+
+mysql> DROP TABLE dup_countries;CREATE TABLE dup_countries AS
+Query OK, 0 rows affected (0.01 sec)
+
+    -> SELECT *
+    -> FROM countries;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO dup_countries SELECT*FROM countries;
+Query OK, 0 rows affected (0.00 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//05 COUNTRIES WITH NULL CONSTRRAINTS
+
+
+mysql> ALTER TABLE countries MODIFY country_name VARCHAR(40) NULL;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//06 JOB TABL WITH max_salary NOT EXCEEDING 25000
+
+mysql>  CREATE TABLE jobs (
+    ->     job_id VARCHAR(10),
+    ->     job_title VARCHAR(35),
+    ->     min_salary DECIMAL(6,0),
+    ->     max_salary DECIMAL(6,0),
+    ->     CHECK (max_salary <= 25000)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+//07 ALLOW ONLY 3COUNTRY
+
+mysql> ALTER TABLE countries
+    -> ADD CONSTRAINT chk_country_name
+    -> CHECK (country_name IN('ITALY', 'INDIA', 'CHINA'));
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+//08 JOB HISTORY WITH DATE FORMATE
+
+mysql> CREATE TABLE job_histry (
+    ->     employee_id INT,
+    ->     start_date DATE,
+    ->     end_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     department_id INT
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+//09 NO DUPLICATE country_id
+
+mysql>  ALTER TABLE countries MODIFY country_id INT UNIQUE;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
 
 
