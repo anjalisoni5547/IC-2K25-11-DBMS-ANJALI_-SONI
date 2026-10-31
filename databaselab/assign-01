@@ -1,0 +1,65 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| countries          |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> USE countries;
+Database changed
+mysql> desc countries;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| country_id   | int         | YES  |     | NULL    |       |
+| country_name | varchar(50) | YES  |     | NULL    |       |
+| region_id    | int         | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO countries (country_id, country_name, region_id)
+    -> VALUES
+    -> (1, 'India', 1),
+    -> (2, 'USA', 2),
+    -> (3, 'United Kingdom', 2),
+    -> (4, 'China', 3),
+    -> (5, 'Japan', 3),
+    -> (6, 'Australia', 4),
+    -> (7, 'Germany', 2),
+    -> (8, 'France', 2),
+    -> (9, 'Brazil', 5),
+    -> (10, 'Canada', 2);
+Query OK, 10 rows affected (0.04 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> SELECT*FROM countries;
++------------+----------------+-----------+
+| country_id | country_name   | region_id |
++------------+----------------+-----------+
+|          1 | India          |         1 |
+|          2 | USA            |         2 |
+|          3 | United Kingdom |         2 |
+|          4 | China          |         3 |
+|          5 | Japan          |         3 |
+|          6 | Australia      |         4 |
+|          7 | Germany        |         2 |
+|          8 | France         |         2 |
+|          9 | Brazil         |         5 |
+|         10 | Canada         |         2 |
++------------+----------------+-----------+
+10 rows in set (0.00 sec)
+
+
+mysql> CREATE TABLE IF NOT EXISTS countries (
+    ->     country_id INT,
+    ->     country_name VARCHAR(50),
+    ->     region_id INT
+    -> );
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+
