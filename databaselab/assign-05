@@ -1,0 +1,530 @@
+//ASSIGNMENT-05 
+
+
+
+//Q1. Employees earning more than the employee whose last name is 'Bull'.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary > (
+    ->     SELECT salary
+    ->     FROM employees
+    ->     WHERE last_name = 'Bull'
+    -> );
+Empty set (0.00 sec)
+
+//Q2. Find employees who work in the IT department.
+mysql> SELECT first_name, last_name
+    -> FROM employees
+    -> WHERE department_id IN (
+    ->     SELECT department_id
+    ->     FROM departments
+    ->     WHERE department_name LIKE '%IT%'
+    -> );
++------------+-----------+
+| first_name | last_name |
++------------+-----------+
+| Aarav      | Sharma    |
+| Sneha      | Gupta     |
+| Karan      | Mehta     |
+| Simran     | Das       |
++------------+-----------+
+4 rows in set (0.04 sec)
+
+//Q3. Find employees who have a manager and work in a USA-based department.
+mysql> CREATE TABLE locations (
+    ->     location_id INT PRIMARY KEY,
+    ->     city VARCHAR(30),
+    ->     country_id CHAR(2)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> ALTER TABLE departments
+    -> ADD location_id INT;
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM departments;
++---------------+------------+-----------------+-------------+
+| department_id | manager_id | department_name | location_id |
++---------------+------------+-----------------+-------------+
+|            10 |        101 | IT              |        NULL |
+|            20 |        102 | HR              |        NULL |
+|            30 |        103 | Finance         |        NULL |
+|            40 |        104 | Marketing       |        NULL |
+|            50 |        105 | Sales           |        NULL |
++---------------+------------+-----------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM departments;
++---------------+------------+-----------------+-------------+
+| department_id | manager_id | department_name | location_id |
++---------------+------------+-----------------+-------------+
+|            10 |        101 | IT              |        NULL |
+|            20 |        102 | HR              |        NULL |
+|            30 |        103 | Finance         |        NULL |
+|            40 |        104 | Marketing       |        NULL |
+|            50 |        105 | Sales           |        NULL |
++---------------+------------+-----------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT first_name, last_name
+    -> FROM employees e
+    -> WHERE e.manager_id IS NOT NULL
+    -> AND e.department_id IN (
+    ->     SELECT d.department_id
+    ->     FROM departments d
+    ->     WHERE d.location_id IN (
+    ->         SELECT l.location_id
+    ->         FROM locations l
+    ->         WHERE l.country_id = 'US'
+    ->     )
+    -> );
+Empty set (0.01 sec)
+
+mysql> SELECT * FROM countries;
++------------+--------------+-----------+
+| country_id | country_name | region_id |
++------------+--------------+-----------+
+|          1 | India        |         1 |
+|         11 | India        |         1 |
+|         12 | China        |         2 |
+|         13 | Italy        |         3 |
+|         14 | India        |         3 |
++------------+--------------+-----------+
+5 rows in set (0.00 sec)
+
+
+//4. Find employees who are managers.
+mysql> SELECT first_name, last_name
+    -> FROM employees
+    -> WHERE employee_id IN (
+    ->     SELECT DISTINCT manager_id
+    ->     FROM employees
+    ->     WHERE manager_id IS NOT NULL
+    -> );
+Empty set (0.00 sec)
+
+
+//Q5. Find employees earning more than the average salary.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary > (
+    ->     SELECT AVG(salary)
+    ->     FROM employees
+    -> );
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Aarav      | Sharma    | 20000.00 |
+| Priya      | Verma     | 28000.00 |
+| Neha       | Jain      | 22000.00 |
+| Pooja      | Shah      | 21000.00 |
+| Simran     | Das       | 27000.00 |
++------------+-----------+----------+
+5 rows in set (0.00 sec)
+
+
+//Q6. Find employees whose salary equals the minimum salary for their job grade.
+
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees e
+    -> WHERE salary = (
+    ->     SELECT MIN(jg.lowest_sal)
+    ->     FROM job_grades jg
+    ->     WHERE e.salary BETWEEN jg.lowest_sal
+    ->                        AND jg.highest_sal
+    -> );
+ERROR 1146 (42S02): Table 'countries.job_grades' doesn't exist
+mysql> DESC employees;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| employee_id   | int          | NO   | PRI | NULL    |       |
+| first_name    | varchar(20)  | YES  |     | NULL    |       |
+| last_name     | varchar(25)  | YES  |     | NULL    |       |
+| email         | varchar(50)  | YES  |     | NULL    |       |
+| phone_number  | varchar(20)  | YES  |     | NULL    |       |
+| hire_date     | date         | YES  |     | NULL    |       |
+| job_id        | varchar(10)  | YES  |     | NULL    |       |
+| salary        | decimal(8,2) | YES  |     | NULL    |       |
+| commission    | decimal(4,2) | YES  |     | NULL    |       |
+| manager_id    | decimal(6,0) | YES  |     | NULL    |       |
+| department_id | decimal(4,0) | YES  | MUL | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+mysql> CREATE TABLE job_grades (
+    ->     grade_level CHAR(1),
+    ->     lowest_sal INT,
+    ->     highest_sal INT
+    -> );
+Query OK, 0 rows affected (0.12 sec)
+
+mysql> INSERT INTO job_grades VALUES
+    -> ('A', 1000, 2999),
+    -> ('B', 3000, 5999),
+    -> ('C', 6000, 9999),
+    -> ('D', 10000, 14999),
+    -> ('E', 15000, 24999);
+Query OK, 5 rows affected (0.04 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees e
+    -> WHERE salary = (
+    ->     SELECT MIN(jg.lowest_sal)
+    ->     FROM job_grades jg
+    ->     WHERE e.salary BETWEEN jg.lowest_sal
+    ->                        AND jg.highest_sal
+    -> );
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Rahul      | Patel     | 15000.00 |
++------------+-----------+----------+
+1 row in set (0.03 sec)
+
+mysql> SELECT employee_id, first_name, last_name, salary
+    -> FROM employees;
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+|           1 | Aarav      | Sharma    | 20000.00 |
+|           2 | Priya      | Verma     | 28000.00 |
+|           3 | Rahul      | Patel     | 15000.00 |
+|           4 | Sneha      | Gupta     | 18000.00 |
+|           5 | Rohan      | Singh     | 14000.00 |
+|           6 | Neha       | Jain      | 22000.00 |
+|           7 | Karan      | Mehta     | 12000.00 |
+|           8 | Pooja      | Shah      | 21000.00 |
+|           9 | Aman       | Khan      | 11000.00 |
+|          10 | Simran     | Das       | 27000.00 |
++-------------+------------+-----------+----------+
+10 rows in set (0.00 sec)
+
+
+//Q7. Find employees earning more than average salary and working in any IT department.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary > (
+    ->     SELECT AVG(salary)
+    ->     FROM employees
+    -> )
+    -> AND department_id IN (
+    ->     SELECT department_id
+    ->     FROM departments
+    ->     WHERE department_name LIKE '%IT%'
+    -> );
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Aarav      | Sharma    | 20000.00 |
+| Simran     | Das       | 27000.00 |
++------------+-----------+----------+
+2 rows in set (0.00 sec)
+
+
+//Q8. Find employees earning more than Mr. Bell.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary > (
+    ->     SELECT salary
+    ->     FROM employees
+    ->     WHERE last_name = 'Bell'
+    -> );
+Empty set (0.00 sec)
+
+
+//Q9. Find employees whose salary equals the minimum salary in any department.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary IN (
+    ->     SELECT MIN(salary)
+    ->     FROM employees
+    ->     GROUP BY department_id
+    -> );
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Rohan      | Singh     | 14000.00 |
+| Karan      | Mehta     | 12000.00 |
+| Aman       | Khan      | 11000.00 |
++------------+-----------+----------+
+3 rows in set (0.04 sec)
+
+
+//Q10. Find employees whose salary is greater than the average salary of all departments.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary > ALL (
+    ->     SELECT AVG(salary)
+    ->     FROM employees
+    ->     GROUP BY department_id
+    -> );
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Priya      | Verma     | 28000.00 |
+| Neha       | Jain      | 22000.00 |
+| Simran     | Das       | 27000.00 |
++------------+-----------+----------+
+3 rows in set (0.00 sec)
+
+//Q11. Find employees earning more than all Shipping Clerks. Sort salary from lowest to highest.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary > ALL (
+    ->     SELECT salary
+    ->     FROM employees
+    ->     WHERE job_id = 'SH_CLERK'
+    -> )
+    -> ORDER BY salary ASC;
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Aman       | Khan      | 11000.00 |
+| Karan      | Mehta     | 12000.00 |
+| Rohan      | Singh     | 14000.00 |
+| Rahul      | Patel     | 15000.00 |
+| Sneha      | Gupta     | 18000.00 |
+| Aarav      | Sharma    | 20000.00 |
+| Pooja      | Shah      | 21000.00 |
+| Neha       | Jain      | 22000.00 |
+| Simran     | Das       | 27000.00 |
+| Priya      | Verma     | 28000.00 |
++------------+-----------+----------+
+10 rows in set (0.00 sec)
+
+
+//Q12. Find employees who are not supervisors.
+mysql> SELECT first_name, last_name
+    -> FROM employees
+    -> WHERE employee_id NOT IN (
+    ->     SELECT manager_id
+    ->     FROM employees
+    ->     WHERE manager_id IS NOT NULL
+    -> );
++------------+-----------+
+| first_name | last_name |
++------------+-----------+
+| Aarav      | Sharma    |
+| Priya      | Verma     |
+| Rahul      | Patel     |
+| Sneha      | Gupta     |
+| Rohan      | Singh     |
+| Neha       | Jain      |
+| Karan      | Mehta     |
+| Pooja      | Shah      |
+| Aman       | Khan      |
+| Simran     | Das       |
++------------+-----------+
+10 rows in set (0.00 sec)
+
+
+//Q13. Display employee ID, first name, last name and department name of all employees.
+mysql> SELECT
+    ->     employee_id,
+    ->     first_name,
+    ->     last_name,
+    ->     department_name
+    -> FROM employees
+    -> LEFT JOIN departments
+    -> ON employees.department_id = departments.department_id;
++-------------+------------+-----------+-----------------+
+| employee_id | first_name | last_name | department_name |
++-------------+------------+-----------+-----------------+
+|           1 | Aarav      | Sharma    | IT              |
+|           2 | Priya      | Verma     | HR              |
+|           3 | Rahul      | Patel     | Finance         |
+|           4 | Sneha      | Gupta     | IT              |
+|           5 | Rohan      | Singh     | HR              |
+|           6 | Neha       | Jain      | Finance         |
+|           7 | Karan      | Mehta     | IT              |
+|           8 | Pooja      | Shah      | HR              |
+|           9 | Aman       | Khan      | Finance         |
+|          10 | Simran     | Das       | IT              |
++-------------+------------+-----------+-----------------+
+10 rows in set (0.00 sec)
+
+
+//Q14. Display employee ID, first name, last name and salary of employees earning above their department's average salary.
+mysql> SELECT
+    ->     employee_id,
+    ->     first_name,
+    ->     last_name,
+    ->     salary
+    -> FROM employees e
+    -> WHERE salary > (
+    ->     SELECT AVG(salary)
+    ->     FROM employees
+    ->     WHERE department_id = e.department_id
+    -> );
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+|           1 | Aarav      | Sharma    | 20000.00 |
+|           2 | Priya      | Verma     | 28000.00 |
+|           6 | Neha       | Jain      | 22000.00 |
+|          10 | Simran     | Das       | 27000.00 |
++-------------+------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+
+//Q15. Fetch even-numbered records from the employees table.
+mysql> SELECT *
+    -> FROM employees
+    -> WHERE employee_id % 2 = 0;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+5 rows in set (0.00 sec)
+
+
+//Q16. Find the 5th maximum salary in the employees table.
+mysql> SELECT DISTINCT salary
+    -> FROM employees
+    -> ORDER BY salary DESC
+    -> LIMIT 4, 1;
++----------+
+| salary   |
++----------+
+| 20000.00 |
++----------+
+1 row in set (0.00 sec)
+
+
+//Q17. Find the 4th minimum salary in the employees table.
+mysql> SELECT DISTINCT salary
+    -> FROM employees
+    -> ORDER BY salary ASC
+    -> LIMIT 3, 1;
++----------+
+| salary   |
++----------+
+| 15000.00 |
++----------+
+1 row in set (0.00 sec)
+
+
+//Q18. Select the last 10 records from a table.
+mysql> SELECT *
+    -> FROM employees
+    -> ORDER BY employee_id DESC
+    -> LIMIT 10;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
+|           9 | Aman       | Khan      | aman@gmail.com   | 9876543218   | 2026-01-09 | J009   | 11000.00 |       NULL |        103 |            30 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|           7 | Karan      | Mehta     | karan@gmail.com  | 9876543216   | 2026-01-07 | J007   | 12000.00 |       NULL |        101 |            10 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           5 | Rohan      | Singh     | rohan@gmail.com  | 9876543214   | 2026-01-05 | J005   | 14000.00 |       NULL |        102 |            20 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           3 | Rahul      | Patel     | rahul@gmail.com  | 9876543212   | 2026-01-03 | J003   | 15000.00 |       NULL |        103 |            30 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM (
+    ->     SELECT *
+    ->     FROM employees
+    ->     ORDER BY employee_id DESC
+    ->     LIMIT 10
+    -> ) AS last_records
+    -> ORDER BY employee_id ASC;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           3 | Rahul      | Patel     | rahul@gmail.com  | 9876543212   | 2026-01-03 | J003   | 15000.00 |       NULL |        103 |            30 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           5 | Rohan      | Singh     | rohan@gmail.com  | 9876543214   | 2026-01-05 | J005   | 14000.00 |       NULL |        102 |            20 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           7 | Karan      | Mehta     | karan@gmail.com  | 9876543216   | 2026-01-07 | J007   | 12000.00 |       NULL |        101 |            10 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|           9 | Aman       | Khan      | aman@gmail.com   | 9876543218   | 2026-01-09 | J009   | 11000.00 |       NULL |        103 |            30 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+10 rows in set (0.00 sec)
+
+
+//Q19. Display department ID and name of departments where no employee is working.
+mysql> SELECT department_id, department_name
+    -> FROM departments
+    -> WHERE department_id NOT IN (
+    ->     SELECT department_id
+    ->     FROM employees
+    ->     WHERE department_id IS NOT NULL
+    -> );
++---------------+-----------------+
+| department_id | department_name |
++---------------+-----------------+
+|            40 | Marketing       |
+|            50 | Sales           |
++---------------+-----------------+
+2 rows in set (0.00 sec)
+
+
+//Q20. Get the three maximum salaries.
+mysql> SELECT DISTINCT salary
+    -> FROM employees
+    -> ORDER BY salary DESC
+    -> LIMIT 3;
++----------+
+| salary   |
++----------+
+| 28000.00 |
+| 27000.00 |
+| 22000.00 |
++----------+
+3 rows in set (0.01 sec)
+
+//Q21. Get the three minimum salaries.
+mysql> SELECT DISTINCT salary
+    -> FROM employees
+    -> ORDER BY salary ASC
+    -> LIMIT 3;
++----------+
+| salary   |
++----------+
+| 11000.00 |
+| 12000.00 |
+| 14000.00 |
++----------+
+3 rows in set (0.00 sec)
+
+//Q22. Get the Nth maximum salary of employees.
+mysql> SET @N = 5;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SET @sql = CONCAT(
+    ->     'SELECT DISTINCT salary FROM employees ',
+    ->     'ORDER BY salary DESC LIMIT ', @N - 1, ', 1'
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> PREPARE stmt FROM @sql;
+Query OK, 0 rows affected (0.00 sec)
+Statement prepared
+
+mysql> EXECUTE stmt;
++----------+
+| salary   |
++----------+
+| 20000.00 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> DEALLOCATE PREPARE stmt;
+Query OK, 0 rows affected (0.00 sec)
+
