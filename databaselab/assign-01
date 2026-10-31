@@ -1,3 +1,6 @@
+//ASSIGNMENT - 01 (CREATE TABLE, DROP TABLE, ALTER TABLE, PRIMARY KEY, FORIEGN KEY)
+
+
 mysql> show databases;
 +--------------------+
 | Database           |
@@ -62,4 +65,585 @@ mysql> CREATE TABLE IF NOT EXISTS countries (
     -> );
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 
+mysql> CREATE TABLE dup_countries
+    -> LIKE countries;
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> SELECT * FROM dup_countries;
+Empty set (0.00 sec)
+
+mysql> DESC dup_countries;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| country_id   | int         | YES  |     | NULL    |       |
+| country_name | varchar(50) | YES  |     | NULL    |       |
+| region_id    | int         | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM dup_countries;
+Empty set (0.00 sec)
+
+
+mysql> CREATE TABLE countries (
+    ->     country_id INT NULL,
+    ->     country_name VARCHAR(50) NULL,
+    ->     region_id INT NULL
+    -> );
+ERROR 1050 (42S01): Table 'countries' already exists
+mysql> DROP TABLE countries;
+Query OK, 0 rows affected (0.06 sec)
+
+mysql>
+mysql> CREATE TABLE countries (
+    ->     country_id INT NULL,
+    ->     country_name VARCHAR(50) NULL,
+    ->     region_id INT NULL
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TABLE countries_new (
+    ->     country_id INT NULL,
+    ->     country_name VARCHAR(50) NULL,
+    ->     region_id INT NULL
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> CREATE TABLE jobs (
+    ->     job_id INT,
+    ->     job_title VARCHAR(35),
+    ->     min_salary DECIMAL(6,0),
+    ->     max_salary DECIMAL(6,0),
+    ->     CHECK (max_salary <= 25000)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc jobs;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| job_id     | int          | YES  |     | NULL    |       |
+| job_title  | varchar(35)  | YES  |     | NULL    |       |
+| min_salary | decimal(6,0) | YES  |     | NULL    |       |
+| max_salary | decimal(6,0) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+
+
+
+mysql> ALTER TABLE countries
+    -> ADD CONSTRAINT chk_country
+    -> CHECK (country_name IN ('Italy', 'India', 'China'));
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO countries VALUES
+    -> (11, 'India', 1),
+    -> (12, 'China', 2),
+    -> (13, 'Italy', 3);
+Query OK, 3 rows affected (0.08 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO countries VALUES
+    -> (14, 'USA', 2);
+ERROR 3819 (HY000): Check constraint 'chk_country' is violated.
+mysql> SHOW CREATE TABLE countries;
++-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table     | Create Table                                                                                                                                                                                                                                                                                                 |
++-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| countries | CREATE TABLE `countries` (
+  `country_id` int DEFAULT NULL,
+  `country_name` varchar(50) DEFAULT NULL,
+  `region_id` int DEFAULT NULL,
+  CONSTRAINT `chk_country` CHECK ((`country_name` in (_cp850'Italy',_cp850'India',_cp850'China')))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.04 sec)
+
+
+mysql> CREATE TABLE job_history (
+    ->     employee_id INT,
+    ->     start_date DATE,
+    ->     end_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     department_id INT
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+mysql> DESC job_history;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| employee_id   | int         | YES  |     | NULL    |       |
+| start_date    | date        | YES  |     | NULL    |       |
+| end_date      | date        | YES  |     | NULL    |       |
+| job_id        | varchar(10) | YES  |     | NULL    |       |
+| department_id | int         | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO job_history
+    -> (employee_id, job_id, start_date, end_date)
+    -> VALUES
+    -> (101, 'IT_PROG', '2020-01-10', '2021-05-20'),
+    -> (102, 'SA_REP', '2019-03-15', '2022-08-10'),
+    -> (103, 'AD_VP', '2018-06-01', '2020-12-25');
+Query OK, 3 rows affected (0.04 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM job_history;
++-------------+------------+------------+---------+---------------+
+| employee_id | start_date | end_date   | job_id  | department_id |
++-------------+------------+------------+---------+---------------+
+|         101 | 2020-01-10 | 2021-05-20 | IT_PROG |          NULL |
+|         102 | 2019-03-15 | 2022-08-10 | SA_REP  |          NULL |
+|         103 | 2018-06-01 | 2020-12-25 | AD_VP   |          NULL |
++-------------+------------+------------+---------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT DATE_FORMAT(end_date, '%d/%m/%Y')
+    -> FROM job_history;
++-----------------------------------+
+| DATE_FORMAT(end_date, '%d/%m/%Y') |
++-----------------------------------+
+| 20/05/2021                        |
+| 10/08/2022                        |
+| 25/12/2020                        |
++-----------------------------------+
+3 rows in set (0.04 sec)
+
+
+mysql> ALTER TABLE countries
+    -> ADD CONSTRAINT uq_country_id UNIQUE (country_id);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SHOW CREATE TABLE countries;
++-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table     | Create Table                                                                                                                                                                                                                                                                                                                                                    |
++-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| countries | CREATE TABLE `countries` (
+  `country_id` int DEFAULT NULL,
+  `country_name` varchar(50) DEFAULT NULL,
+  `region_id` int DEFAULT NULL,
+  UNIQUE KEY `uq_country_id` (`country_id`),
+  CONSTRAINT `chk_country` CHECK ((`country_name` in (_utf8mb4'Italy',_utf8mb4'India',_utf8mb4'China')))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO countries
+    -> VALUES (1, 'India', 1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM countries;
++------------+--------------+-----------+
+| country_id | country_name | region_id |
++------------+--------------+-----------+
+|         11 | India        |         1 |
+|         12 | China        |         2 |
+|         13 | Italy        |         3 |
+|          1 | India        |         1 |
++------------+--------------+-----------+
+4 rows in set (0.00 sec)
+
+
+
+
+mysql> ALTER TABLE jobs
+    -> MODIFY job_title VARCHAR(35) NOT NULL DEFAULT ' ',
+    -> MODIFY min_salary DECIMAL(6,0) DEFAULT 8000,
+    -> MODIFY max_salary DECIMAL(6,0) DEFAULT NULL;
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC jobs;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| job_id     | int          | YES  |     | NULL    |       |
+| job_title  | varchar(35)  | NO   |     |         |       |
+| min_salary | decimal(6,0) | YES  |     | 8000    |       |
+| max_salary | decimal(6,0) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> INSERT INTO jobs (job_id)
+    -> VALUES (101);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> SELECT * FROM jobs;
++--------+-----------+------------+------------+
+| job_id | job_title | min_salary | max_salary |
++--------+-----------+------------+------------+
+|    101 |           |       8000 |       NULL |
++--------+-----------+------------+------------+
+1 row in set (0.00 sec)
+
+
+
+mysql> ALTER TABLE countries
+    -> ADD PRIMARY KEY (country_id);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+mysql> ^C
+mysql> DESC countries;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| country_id   | int         | NO   | PRI | NULL    |       |
+| country_name | varchar(50) | YES  |     | NULL    |       |
+| region_id    | int         | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+
+
+
+mysql> CREATE TABLE job_history (
+    ->     employee_id INT UNIQUE,
+    ->     start_date DATE,
+    ->     end_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     department_id DECIMAL(4,0),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    -> ) ENGINE=InnoDB;
+ERROR 1050 (42S01): Table 'job_history' already exists
+
+mysql> INSERT INTO countries (country_name, region_id)
+    -> VALUES ('India', 3);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> SELECT * FROM countries;
++------------+--------------+-----------+
+| country_id | country_name | region_id |
++------------+--------------+-----------+
+|          1 | India        |         1 |
+|         11 | India        |         1 |
+|         12 | China        |         2 |
+|         13 | Italy        |         3 |
+|         14 | India        |         3 |
++------------+--------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> ALTER TABLE countries
+    -> DROP CHECK chk_country;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE countries
+    -> ADD CONSTRAINT chk_country
+    -> CHECK (country_name IN ('Italy', 'India', 'China', 'Nepal'));
+Query OK, 5 rows affected (0.11 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> DROP TABLE job_history;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> CREATE TABLE job_history (
+    ->     employee_id INT UNIQUE,
+    ->     start_date DATE,
+    ->     end_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     department_id DECIMAL(4,0),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> DESC jobs;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| job_id     | varchar(10)  | YES  | UNI | NULL    |       |
+| job_title  | varchar(35)  | NO   |     |         |       |
+| min_salary | decimal(6,0) | YES  |     | 8000    |       |
+| max_salary | decimal(6,0) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> DESC job_history;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| employee_id   | int          | YES  | UNI | NULL    |       |
+| start_date    | date         | YES  |     | NULL    |       |
+| end_date      | date         | YES  |     | NULL    |       |
+| job_id        | varchar(10)  | YES  | MUL | NULL    |       |
+| department_id | decimal(4,0) | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> DESC jobs;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| job_id     | varchar(10)  | YES  | UNI | NULL    |       |
+| job_title  | varchar(35)  | NO   |     |         |       |
+| min_salary | decimal(6,0) | YES  |     | 8000    |       |
+| max_salary | decimal(6,0) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+
+mysql> CREATE TABLE departments (
+    ->     department_id DECIMAL(4,0),
+    ->     manager_id DECIMAL(6,0),
+    ->     department_name VARCHAR(30),
+    ->     PRIMARY KEY (department_id, manager_id)
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> INSERT INTO departments VALUES
+    -> (10, 101, 'IT'),
+    -> (20, 102, 'HR'),
+    -> (30, 103, 'Finance'),
+    -> (40, 104, 'Marketing'),
+    -> (50, 105, 'Sales');
+Query OK, 5 rows affected (0.04 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM departments;
++---------------+------------+-----------------+
+| department_id | manager_id | department_name |
++---------------+------------+-----------------+
+|            10 |        101 | IT              |
+|            20 |        102 | HR              |
+|            30 |        103 | Finance         |
+|            40 |        104 | Marketing       |
+|            50 |        105 | Sales           |
++---------------+------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> CREATE TABLE employees (
+    ->     employee_id INT PRIMARY KEY,
+    ->     first_name VARCHAR(20),
+    ->     last_name VARCHAR(25),
+    ->     email VARCHAR(50),
+    ->     phone_number VARCHAR(20),
+    ->     hire_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     salary DECIMAL(8,2),
+    ->     commission DECIMAL(4,2),
+    ->     manager_id DECIMAL(6,0),
+    ->     department_id DECIMAL(4,0),
+    ->
+    ->     FOREIGN KEY (department_id, manager_id)
+    ->     REFERENCES departments(department_id, manager_id)
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> DESC employees;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| employee_id   | int          | NO   | PRI | NULL    |       |
+| first_name    | varchar(20)  | YES  |     | NULL    |       |
+| last_name     | varchar(25)  | YES  |     | NULL    |       |
+| email         | varchar(50)  | YES  |     | NULL    |       |
+| phone_number  | varchar(20)  | YES  |     | NULL    |       |
+| hire_date     | date         | YES  |     | NULL    |       |
+| job_id        | varchar(10)  | YES  |     | NULL    |       |
+| salary        | decimal(8,2) | YES  |     | NULL    |       |
+| commission    | decimal(4,2) | YES  |     | NULL    |       |
+| manager_id    | decimal(6,0) | YES  |     | NULL    |       |
+| department_id | decimal(4,0) | YES  | MUL | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+mysql>
+mysql> SHOW CREATE TABLE employees;
++-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table     | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
++-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| employees | CREATE TABLE `employees` (
+  `employee_id` int NOT NULL,
+  `first_name` varchar(20) DEFAULT NULL,
+  `last_name` varchar(25) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `hire_date` date DEFAULT NULL,
+  `job_id` varchar(10) DEFAULT NULL,
+  `salary` decimal(8,2) DEFAULT NULL,
+  `commission` decimal(4,2) DEFAULT NULL,
+  `manager_id` decimal(6,0) DEFAULT NULL,
+  `department_id` decimal(4,0) DEFAULT NULL,
+  PRIMARY KEY (`employee_id`),
+  KEY `department_id` (`department_id`,`manager_id`),
+  CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`department_id`, `manager_id`) REFERENCES `departments` (`department_id`, `manager_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec) 
+
+
+
+
+mysql> ALTER TABLE departments
+    -> ADD CONSTRAINT uq_department_id UNIQUE (department_id);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE employees16 (
+    ->     employee_id INT PRIMARY KEY,
+    ->     first_name VARCHAR(20),
+    ->     last_name VARCHAR(25),
+    ->     email VARCHAR(50),
+    ->     phone_number VARCHAR(20),
+    ->     hire_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     salary DECIMAL(8,2),
+    ->     commission DECIMAL(4,2),
+    ->     manager_id DECIMAL(6,0),
+    ->     department_id DECIMAL(4,0),
+    ->
+    ->     FOREIGN KEY (department_id)
+    ->     REFERENCES departments(department_id),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.08 sec)
+
+
+//
+
+mysql> CREATE TABLE employees17 (
+    ->     employee_id INT PRIMARY KEY,
+    ->     first_name VARCHAR(20),
+    ->     last_name VARCHAR(25),
+    ->     job_id VARCHAR(10),
+    ->     salary DECIMAL(8,2),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    ->
+    ->     ON UPDATE CASCADE
+    ->     ON DELETE RESTRICT
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.03 sec)
+mysql> desc employees17;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| employee_id | int          | NO   | PRI | NULL    |       |
+| first_name  | varchar(20)  | YES  |     | NULL    |       |
+| last_name   | varchar(25)  | YES  |     | NULL    |       |
+| job_id      | varchar(10)  | YES  | MUL | NULL    |       |
+| salary      | decimal(8,2) | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+
+mysql> CREATE TABLE employees18 (
+    ->     employee_id INT PRIMARY KEY,
+    ->     first_name VARCHAR(20),
+    ->     last_name VARCHAR(25),
+    ->     job_id VARCHAR(10),
+    ->     salary DECIMAL(8,2),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    ->
+    ->     ON DELETE CASCADE
+    ->     ON UPDATE RESTRICT
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> desc employees18;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| employee_id | int          | NO   | PRI | NULL    |       |
+| first_name  | varchar(20)  | YES  |     | NULL    |       |
+| last_name   | varchar(25)  | YES  |     | NULL    |       |
+| job_id      | varchar(10)  | YES  | MUL | NULL    |       |
+| salary      | decimal(8,2) | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+
+
+mysql> CREATE TABLE employees19 (
+    ->     employee_id INT PRIMARY KEY,
+    ->     first_name VARCHAR(20),
+    ->     last_name VARCHAR(25),
+    ->     job_id VARCHAR(10) NULL,
+    ->     salary DECIMAL(8,2),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    ->
+    ->     ON DELETE SET NULL
+    ->     ON UPDATE SET NULL
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> desc employees19;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| employee_id | int          | NO   | PRI | NULL    |       |
+| first_name  | varchar(20)  | YES  |     | NULL    |       |
+| last_name   | varchar(25)  | YES  |     | NULL    |       |
+| job_id      | varchar(10)  | YES  | MUL | NULL    |       |
+| salary      | decimal(8,2) | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+
+
+mysql> CREATE TABLE employees20 (
+    ->     employee_id INT PRIMARY KEY,
+    ->     first_name VARCHAR(20),
+    ->     last_name VARCHAR(25),
+    ->     job_id VARCHAR(10),
+    ->     salary DECIMAL(8,2),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    ->
+    ->     ON DELETE NO ACTION
+    ->     ON UPDATE NO ACTION
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc employees20;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| employee_id | int          | NO   | PRI | NULL    |       |
+| first_name  | varchar(20)  | YES  |     | NULL    |       |
+| last_name   | varchar(25)  | YES  |     | NULL    |       |
+| job_id      | varchar(10)  | YES  | MUL | NULL    |       |
+| salary      | decimal(8,2) | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+
+mysql> SHOW TABLES;
++---------------------+
+| Tables_in_countries |
++---------------------+
+| countries           |
+| countries_new       |
+| departments         |
+| dup_countries       |
+| employees           |
+| employees16         |
+| employees17         |
+| employees18         |
+| employees19         |
+| employees20         |
+| job_history         |
+| jobs                |
++---------------------+
+12 rows in set (0.00 sec)
 
