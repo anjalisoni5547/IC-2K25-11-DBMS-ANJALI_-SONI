@@ -1,0 +1,210 @@
+//ASSIGNMENT-04 (GROUP BY, COUNT(), SUM(), AVG(),MIN(), MAX() )
+
+//Q1. Display the number of different jobs available in the employees table.
+mysql> SELECT COUNT(DISTINCT job_id) AS total_jobs
+    -> FROM employees;
++------------+
+| total_jobs |
++------------+
+|         10 |
++------------+
+1 row in set (0.00 sec)
+
+
+//Q2. Display the total salaries payable to all employees.
+mysql> SELECT SUM(salary) AS total_salary
+    -> FROM employees;
++--------------+
+| total_salary |
++--------------+
+|    188000.00 |
++--------------+
+1 row in set (0.00 sec)
+
+
+//Q3. Display the minimum salary from the employees table.
+mysql> SELECT MIN(salary) AS minimum_salary
+    -> FROM employees;
++----------------+
+| minimum_salary |
++----------------+
+|       11000.00 |
++----------------+
+1 row in set (0.00 sec)
+
+//Q4. Display the maximum salary of an employee working as a Programmer.
+mysql> SELECT MAX(salary) AS maximum_salary
+    -> FROM employees
+    -> WHERE job_id = 'IT_PROG';
++----------------+
+| maximum_salary |
++----------------+
+|           NULL |
++----------------+
+1 row in set (0.04 sec)
+
+
+//Q5. Display the average salary and number of employees working in department 90.
+mysql> SELECT
+    ->     AVG(salary) AS average_salary,
+    ->     COUNT(*) AS total_employees
+    -> FROM employees
+    -> WHERE department_id = 90;
++----------------+-----------------+
+| average_salary | total_employees |
++----------------+-----------------+
+|           NULL |               0 |
++----------------+-----------------+
+1 row in set (0.00 sec)
+
+
+//Q6. Display the highest, lowest, total and average salary of all employees.
+mysql> SELECT
+    ->     MAX(salary) AS highest_salary,
+    ->     MIN(salary) AS lowest_salary,
+    ->     SUM(salary) AS total_salary,
+    ->     AVG(salary) AS average_salary
+    -> FROM employees;
++----------------+---------------+--------------+----------------+
+| highest_salary | lowest_salary | total_salary | average_salary |
++----------------+---------------+--------------+----------------+
+|       28000.00 |      11000.00 |    188000.00 |   18800.000000 |
++----------------+---------------+--------------+----------------+
+1 row in set (0.00 sec)
+
+
+//Q7. Display the number of employees having the same job.
+mysql> SELECT
+    ->     job_id,
+    ->     COUNT(*) AS total_employees
+    -> FROM employees
+    -> GROUP BY job_id;
++--------+-----------------+
+| job_id | total_employees |
++--------+-----------------+
+| J001   |               1 |
+| J002   |               1 |
+| J003   |               1 |
+| J004   |               1 |
+| J005   |               1 |
+| J006   |               1 |
+| J007   |               1 |
+| J008   |               1 |
+| J009   |               1 |
+| J010   |               1 |
++--------+-----------------+
+10 rows in set (0.00 sec)
+
+
+//Q8. Display the difference between the highest and lowest salaries.
+mysql> SELECT
+    ->     MAX(salary) - MIN(salary) AS salary_difference
+    -> FROM employees;
++-------------------+
+| salary_difference |
++-------------------+
+|          17000.00 |
++-------------------+
+1 row in set (0.00 sec)
+
+
+//Q9. Display the manager ID and salary of the lowest-paid employee under each manager.
+mysql> SELECT
+    ->     manager_id,
+    ->     MIN(salary) AS lowest_salary
+    -> FROM employees
+    -> GROUP BY manager_id;
++------------+---------------+
+| manager_id | lowest_salary |
++------------+---------------+
+|        101 |      12000.00 |
+|        102 |      14000.00 |
+|        103 |      11000.00 |
++------------+---------------+
+3 rows in set (0.00 sec)
+
+
+//Q10. Display the department ID and total salary payable in each department.
+mysql> SELECT
+    ->     department_id,
+    ->     SUM(salary) AS total_salary
+    -> FROM employees
+    -> GROUP BY department_id;
++---------------+--------------+
+| department_id | total_salary |
++---------------+--------------+
+|            10 |     77000.00 |
+|            20 |     63000.00 |
+|            30 |     48000.00 |
++---------------+--------------+
+3 rows in set (0.00 sec)
+
+
+//Q11. Display the average salary for each job ID, excluding Programmers.
+mysql> SELECT
+    ->     job_id,
+    ->     AVG(salary) AS average_salary
+    -> FROM employees
+    -> WHERE job_id <> 'IT_PROG'
+    -> GROUP BY job_id;
++--------+----------------+
+| job_id | average_salary |
++--------+----------------+
+| J001   |   20000.000000 |
+| J002   |   28000.000000 |
+| J003   |   15000.000000 |
+| J004   |   18000.000000 |
+| J005   |   14000.000000 |
+| J006   |   22000.000000 |
+| J007   |   12000.000000 |
+| J008   |   21000.000000 |
+| J009   |   11000.000000 |
+| J010   |   27000.000000 |
++--------+----------------+
+10 rows in set (0.04 sec)
+
+
+//Q12. Display total, maximum, minimum and average salary job-wise for department 90 only.
+mysql> SELECT
+    ->     job_id,
+    ->     SUM(salary) AS total_salary,
+    ->     MAX(salary) AS maximum_salary,
+    ->     MIN(salary) AS minimum_salary,
+    ->     AVG(salary) AS average_salary
+    -> FROM employees
+    -> WHERE department_id = 90
+    -> GROUP BY job_id;
+Empty set (0.00 sec)
+
+//Q13. Display job ID and maximum salary of employees where maximum salary is greater than or equal to $4,000.
+mysql> SELECT
+    ->     job_id,
+    ->     MAX(salary) AS maximum_salary
+    -> FROM employees
+    -> GROUP BY job_id
+    -> HAVING MAX(salary) >= 4000;
++--------+----------------+
+| job_id | maximum_salary |
++--------+----------------+
+| J001   |       20000.00 |
+| J002   |       28000.00 |
+| J003   |       15000.00 |
+| J004   |       18000.00 |
+| J005   |       14000.00 |
+| J006   |       22000.00 |
+| J007   |       12000.00 |
+| J008   |       21000.00 |
+| J009   |       11000.00 |
+| J010   |       27000.00 |
++--------+----------------+
+10 rows in set (0.00 sec)
+
+
+//Q14. Display the average salary for departments employing more than 10 employees.
+mysql> SELECT
+    ->     department_id,
+    ->     AVG(salary) AS average_salary
+    -> FROM employees
+    -> GROUP BY department_id
+    -> HAVING COUNT(*) > 10;
+Empty set (0.00 sec)
