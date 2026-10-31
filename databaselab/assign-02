@@ -1,0 +1,351 @@
+//ASSIGNMENT-02 (BASED ON HR, AND EMPLOYEE TABLE)
+
+
+//Q1-DISPLAY FIRST AND LAST NAME USING ALIASES
+mysql> SELECT
+    ->     first_name AS 'First Name',
+    ->     last_name AS 'Last Name'
+    -> FROM employees;
++------------+-----------+
+| First Name | Last Name |
++------------+-----------+
+| Aarav      | Sharma    |
+| Priya      | Verma     |
+| Rahul      | Patel     |
+| Sneha      | Gupta     |
+| Rohan      | Singh     |
+| Neha       | Jain      |
+| Karan      | Mehta     |
+| Pooja      | Shah      |
+| Aman       | Khan      |
+| Simran     | Das       |
++------------+-----------+
+10 rows in set (0.00 sec)
+
+//Q2-GET UNIQUE DEPARTMENT_IDS
+mysql> SELECT DISTINCT department_id
+    -> FROM employees;
++---------------+
+| department_id |
++---------------+
+|            10 |
+|            20 |
+|            30 |
++---------------+
+3 rows in set (0.00 sec)
+
+
+//Q3-DISPLAY ALL EMPLOYEE DETAILS IN DESCENDING ORDER OF FIRST NAME 
+mysql> SELECT *
+    -> FROM employees
+    -> ORDER BY first_name DESC;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
+|           5 | Rohan      | Singh     | rohan@gmail.com  | 9876543214   | 2026-01-05 | J005   | 14000.00 |       NULL |        102 |            20 |
+|           3 | Rahul      | Patel     | rahul@gmail.com  | 9876543212   | 2026-01-03 | J003   | 15000.00 |       NULL |        103 |            30 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           7 | Karan      | Mehta     | karan@gmail.com  | 9876543216   | 2026-01-07 | J007   | 12000.00 |       NULL |        101 |            10 |
+|           9 | Aman       | Khan      | aman@gmail.com   | 9876543218   | 2026-01-09 | J009   | 11000.00 |       NULL |        103 |            30 |
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+10 rows in set (0.00 sec)
+
+
+//Q4-DISPLAY NAMES, SALRY, AND PF(15% OF SALARY)
+mysql> SELECT
+    ->     first_name,
+    ->     last_name,
+    ->     salary,
+    ->     salary * 0.15 AS PF
+    -> FROM employees;
++------------+-----------+----------+-----------+
+| first_name | last_name | salary   | PF        |
++------------+-----------+----------+-----------+
+| Aarav      | Sharma    | 20000.00 | 3000.0000 |
+| Priya      | Verma     | 28000.00 | 4200.0000 |
+| Rahul      | Patel     | 15000.00 | 2250.0000 |
+| Sneha      | Gupta     | 18000.00 | 2700.0000 |
+| Rohan      | Singh     | 14000.00 | 2100.0000 |
+| Neha       | Jain      | 22000.00 | 3300.0000 |
+| Karan      | Mehta     | 12000.00 | 1800.0000 |
+| Pooja      | Shah      | 21000.00 | 3150.0000 |
+| Aman       | Khan      | 11000.00 | 1650.0000 |
+| Simran     | Das       | 27000.00 | 4050.0000 |
++------------+-----------+----------+-----------+
+10 rows in set (0.00 sec)
+
+
+//Q5-DISPLAY EMPLOYEE ID, NAMES AND SALRY IN ASSCENDING OREDER
+mysql> SELECT
+    ->     employee_id,
+    ->     first_name,
+    ->     last_name,
+    ->     salary
+    -> FROM employees
+    -> ORDER BY salary ASC;
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+|           9 | Aman       | Khan      | 11000.00 |
+|           7 | Karan      | Mehta     | 12000.00 |
+|           5 | Rohan      | Singh     | 14000.00 |
+|           3 | Rahul      | Patel     | 15000.00 |
+|           4 | Sneha      | Gupta     | 18000.00 |
+|           1 | Aarav      | Sharma    | 20000.00 |
+|           8 | Pooja      | Shah      | 21000.00 |
+|           6 | Neha       | Jain      | 22000.00 |
+|          10 | Simran     | Das       | 27000.00 |
+|           2 | Priya      | Verma     | 28000.00 |
++-------------+------------+-----------+----------+
+10 rows in set (0.00 sec)
+
+
+//Q6. GET TOTAL SALARIES PAYABLE TO EMPLOYEES
+mysql> SELECT SUM(salary) AS total_salary
+    -> FROM employees;
++--------------+
+| total_salary |
++--------------+
+|    188000.00 |
++--------------+
+1 row in set (0.00 sec)
+
+
+//Q7. GET MAXIMUM AND MINIMUM SALARY
+mysql> SELECT
+    ->     MAX(salary) AS maximum_salary,
+    ->     MIN(salary) AS minimum_salary
+    -> FROM employees;
++----------------+----------------+
+| maximum_salary | minimum_salary |
++----------------+----------------+
+|       28000.00 |       11000.00 |
++----------------+----------------+
+1 row in set (0.04 sec)
+
+
+//Q8. GET AVERAGE SALARY AND NUMBER OF EMPLOYEES
+mysql> SELECT
+    ->     AVG(salary) AS average_salary,
+    ->     COUNT(*) AS total_employees
+    -> FROM employees;
++----------------+-----------------+
+| average_salary | total_employees |
++----------------+-----------------+
+|   18800.000000 |              10 |
++----------------+-----------------+
+1 row in set (0.00 sec)
+
+
+//Q9. GET THE NUMBER OF EMPLOYEES WORKING IN THE COMPANY
+mysql> SELECT COUNT(*) AS total_employees
+    -> FROM employees;
++-----------------+
+| total_employees |
++-----------------+
+|              10 |
++-----------------+
+1 row in set (0.00 sec)
+
+
+//Q10. GET THE NUMBER OF JOBS AVAILABLE IN EMPLOYEES TABLE
+mysql> SELECT COUNT(DISTINCT job_id) AS total_jobs
+    -> FROM employees;
++------------+
+| total_jobs |
++------------+
+|         10 |
++------------+
+1 row in set (0.04 sec)
+
+
+//Q11. DISPLAY FIRST NAMES IN UPPERCASE
+mysql> SELECT UPPER(first_name) AS first_name
+    -> FROM employees;
++------------+
+| first_name |
++------------+
+| AARAV      |
+| PRIYA      |
+| RAHUL      |
+| SNEHA      |
+| ROHAN      |
+| NEHA       |
+| KARAN      |
+| POOJA      |
+| AMAN       |
+| SIMRAN     |
++------------+
+10 rows in set (0.00 sec)
+
+
+//Q12. GET THE FIRST 3 CHARACTERS OF FIRST NAME
+mysql> SELECT SUBSTRING(first_name, 1, 3)
+    -> FROM employees;
++-----------------------------+
+| SUBSTRING(first_name, 1, 3) |
++-----------------------------+
+| Aar                         |
+| Pri                         |
+| Rah                         |
+| Sne                         |
+| Roh                         |
+| Neh                         |
+| Kar                         |
+| Poo                         |
+| Ama                         |
+| Sim                         |
++-----------------------------+
+10 rows in set (0.00 sec)
+
+
+//Q13. CALCULATE 171 × 214 + 625
+mysql> SELECT 171 * 214 + 625 AS Result;
++--------+
+| Result |
++--------+
+|  37219 |
++--------+
+1 row in set (0.00 sec)
+
+
+//Q14. DISPLAY FULL EMPLOYEE NAMES
+mysql> SELECT CONCAT(first_name, ' ', last_name) AS Employee_Name
+    -> FROM employees;
++---------------+
+| Employee_Name |
++---------------+
+| Aarav Sharma  |
+| Priya Verma   |
+| Rahul Patel   |
+| Sneha Gupta   |
+| Rohan Singh   |
+| Neha Jain     |
+| Karan Mehta   |
+| Pooja Shah    |
+| Aman Khan     |
+| Simran Das    |
++---------------+
+10 rows in set (0.04 sec)
+
+
+//Q15. REMOVE WHITE SPACES FROM BOTH SIDES OF FIRST NAME
+mysql> SELECT TRIM(first_name) AS first_name
+    -> FROM employees;
++------------+
+| first_name |
++------------+
+| Aarav      |
+| Priya      |
+| Rahul      |
+| Sneha      |
+| Rohan      |
+| Neha       |
+| Karan      |
+| Pooja      |
+| Aman       |
+| Simran     |
++------------+
+10 rows in set (0.00 sec)
+
+//Q16. GET THE LENGTH OF EMPLOYEE NAMES
+mysql> SELECT
+    ->     first_name,
+    ->     last_name,
+    ->     LENGTH(first_name) AS first_name_length,
+    ->     LENGTH(last_name) AS last_name_length
+    -> FROM employees;
++------------+-----------+-------------------+------------------+
+| first_name | last_name | first_name_length | last_name_length |
++------------+-----------+-------------------+------------------+
+| Aarav      | Sharma    |                 5 |                6 |
+| Priya      | Verma     |                 5 |                5 |
+| Rahul      | Patel     |                 5 |                5 |
+| Sneha      | Gupta     |                 5 |                5 |
+| Rohan      | Singh     |                 5 |                5 |
+| Neha       | Jain      |                 4 |                4 |
+| Karan      | Mehta     |                 5 |                5 |
+| Pooja      | Shah      |                 5 |                4 |
+| Aman       | Khan      |                 4 |                4 |
+| Simran     | Das       |                 6 |                3 |
++------------+-----------+-------------------+------------------+
+10 rows in set (0.00 sec)
+
+
+//Q17. CHECK WHETHER FIRST_NAME CONTAINS NUMBERS
+mysql> SELECT *
+    -> FROM employees
+    -> WHERE first_name REGEXP '[0-9]';
+Empty set (0.09 sec)
+
+
+//Q18. SELECT THE FIRST 10 RECORDS
+mysql> SELECT *
+    -> FROM employees
+    -> LIMIT 10;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           3 | Rahul      | Patel     | rahul@gmail.com  | 9876543212   | 2026-01-03 | J003   | 15000.00 |       NULL |        103 |            30 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           5 | Rohan      | Singh     | rohan@gmail.com  | 9876543214   | 2026-01-05 | J005   | 14000.00 |       NULL |        102 |            20 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           7 | Karan      | Mehta     | karan@gmail.com  | 9876543216   | 2026-01-07 | J007   | 12000.00 |       NULL |        101 |            10 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|           9 | Aman       | Khan      | aman@gmail.com   | 9876543218   | 2026-01-09 | J009   | 11000.00 |       NULL |        103 |            30 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+10 rows in set (0.00 sec)
+
+
+mysql> SELECT *
+    -> FROM employees
+    -> ORDER BY employee_id
+    -> LIMIT 10;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           3 | Rahul      | Patel     | rahul@gmail.com  | 9876543212   | 2026-01-03 | J003   | 15000.00 |       NULL |        103 |            30 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           5 | Rohan      | Singh     | rohan@gmail.com  | 9876543214   | 2026-01-05 | J005   | 14000.00 |       NULL |        102 |            20 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           7 | Karan      | Mehta     | karan@gmail.com  | 9876543216   | 2026-01-07 | J007   | 12000.00 |       NULL |        101 |            10 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|           9 | Aman       | Khan      | aman@gmail.com   | 9876543218   | 2026-01-09 | J009   | 11000.00 |       NULL |        103 |            30 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+10 rows in set (0.00 sec)
+
+
+//Q19. CALCULATE MONTHLY SALARY ROUNDED TO 2 DECIMAL PLACES
+
+mysql> SELECT
+    ->     employee_id,
+    ->     first_name,
+    ->     last_name,
+    ->     ROUND(salary / 12, 2) AS monthly_salary
+    -> FROM employees;
++-------------+------------+-----------+----------------+
+| employee_id | first_name | last_name | monthly_salary |
++-------------+------------+-----------+----------------+
+|           1 | Aarav      | Sharma    |        1666.67 |
+|           2 | Priya      | Verma     |        2333.33 |
+|           3 | Rahul      | Patel     |        1250.00 |
+|           4 | Sneha      | Gupta     |        1500.00 |
+|           5 | Rohan      | Singh     |        1166.67 |
+|           6 | Neha       | Jain      |        1833.33 |
+|           7 | Karan      | Mehta     |        1000.00 |
+|           8 | Pooja      | Shah      |        1750.00 |
+|           9 | Aman       | Khan      |         916.67 |
+|          10 | Simran     | Das       |        2250.00 |
++-------------+------------+-----------+----------------+
+10 rows in set (0.00 sec)
