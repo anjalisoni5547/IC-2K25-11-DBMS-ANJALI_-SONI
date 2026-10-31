@@ -1,0 +1,137 @@
+//ASSIGNMENT-03 (BETWEEN, NOT BETWEEN,IN, LIKE, %,_,DISTINCT, ORDER BY, YEAR(), AS)
+
+//Q1. Employees whose salary is NOT between $10,000 and $15,000.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary NOT BETWEEN 10000 AND 15000;
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Aarav      | Sharma    | 20000.00 |
+| Priya      | Verma     | 28000.00 |
+| Sneha      | Gupta     | 18000.00 |
+| Neha       | Jain      | 22000.00 |
+| Pooja      | Shah      | 21000.00 |
+| Simran     | Das       | 27000.00 |
++------------+-----------+----------+
+6 rows in set (0.01 sec)
+
+
+//Q2. Employees working in department 30 or 100, in ascending order.
+mysql> SELECT first_name, last_name, department_id
+    -> FROM employees
+    -> WHERE department_id IN (30, 100)
+    -> ORDER BY department_id ASC;
++------------+-----------+---------------+
+| first_name | last_name | department_id |
++------------+-----------+---------------+
+| Rahul      | Patel     |            30 |
+| Neha       | Jain      |            30 |
+| Aman       | Khan      |            30 |
++------------+-----------+---------------+
+3 rows in set (0.04 sec)
+
+
+//Q3. Employees whose salary is not between 10,000 and 15,000 and who work in department 30 or 100.
+mysql> SELECT first_name, last_name, salary
+    -> FROM employees
+    -> WHERE salary NOT BETWEEN 10000 AND 15000
+    -> AND department_id IN (30, 100);
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Neha       | Jain      | 22000.00 |
++------------+-----------+----------+
+1 row in set (0.00 sec)
+
+
+//Q4. Employees hired in 1987.
+mysql> SELECT first_name, last_name, hire_date
+    -> FROM employees
+    -> WHERE YEAR(hire_date) = 1987;
+Empty set (0.01 sec)
+
+
+//Q5. Employees whose first name contains both 'b' and 'c'.
+mysql> SELECT first_name
+    -> FROM employees
+    -> WHERE first_name LIKE '%b%'
+    -> AND first_name LIKE '%c%';
+Empty set (0.04 sec)
+
+//Q6. Employees who are Programmers or Shipping Clerks, excluding salaries 4500, 10000 and 15000.
+mysql> SELECT last_name, job_id, salary
+    -> FROM employees
+    -> WHERE job_id IN ('IT_PROG', 'SH_CLERK')
+    -> AND salary NOT IN (4500, 10000, 15000);
+Empty set (0.00 sec)
+
+
+//Q7. Employees whose last name has exactly 6 characters.
+mysql> SELECT last_name
+    -> FROM employees
+    -> WHERE last_name LIKE '______';
++-----------+
+| last_name |
++-----------+
+| Sharma    |
++-----------+
+1 row in set (0.00 sec)
+
+
+//Q8. Employees whose last name has 'e' as the third character.
+mysql> SELECT last_name
+    -> FROM employees
+    -> WHERE last_name LIKE '__e%';
+Empty set (0.00 sec)
+
+
+//Q9. Display all available jobs/designations in the employees table.
+mysql> SELECT DISTINCT job_id
+    -> FROM employees;
++--------+
+| job_id |
++--------+
+| J001   |
+| J002   |
+| J003   |
+| J004   |
+| J005   |
+| J006   |
+| J007   |
+| J008   |
+| J009   |
+| J010   |
++--------+
+10 rows in set (0.00 sec)
+
+
+//Q10. Display employee names, salary and PF (15% of salary).
+mysql> SELECT
+    ->     first_name,
+    ->     last_name,
+    ->     salary,
+    ->     salary * 0.15 AS PF
+    -> FROM employees;
++------------+-----------+----------+-----------+
+| first_name | last_name | salary   | PF        |
++------------+-----------+----------+-----------+
+| Aarav      | Sharma    | 20000.00 | 3000.0000 |
+| Priya      | Verma     | 28000.00 | 4200.0000 |
+| Rahul      | Patel     | 15000.00 | 2250.0000 |
+| Sneha      | Gupta     | 18000.00 | 2700.0000 |
+| Rohan      | Singh     | 14000.00 | 2100.0000 |
+| Neha       | Jain      | 22000.00 | 3300.0000 |
+| Karan      | Mehta     | 12000.00 | 1800.0000 |
+| Pooja      | Shah      | 21000.00 | 3150.0000 |
+| Aman       | Khan      | 11000.00 | 1650.0000 |
+| Simran     | Das       | 27000.00 | 4050.0000 |
++------------+-----------+----------+-----------+
+10 rows in set (0.00 sec)
+
+
+//Q11. Display all employee records whose last name is BLAKE, SCOTT, KING or FORD.
+mysql> SELECT *
+    -> FROM employees
+    -> WHERE UPPER(last_name) IN ('BLAKE', 'SCOTT', 'KING', 'FORD');
+Empty set (0.00 sec)
