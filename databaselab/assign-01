@@ -1,6 +1,6 @@
 //ASSIGNMENT - 01 (CREATE TABLE, DROP TABLE, ALTER TABLE, PRIMARY KEY, FORIEGN KEY)
 
-
+//Q1. Create a simple countries table
 mysql> show databases;
 +--------------------+
 | Database           |
@@ -58,6 +58,7 @@ mysql> SELECT*FROM countries;
 10 rows in set (0.00 sec)
 
 
+//Q2. Create a table only if it does not already exist
 mysql> CREATE TABLE IF NOT EXISTS countries (
     ->     country_id INT,
     ->     country_name VARCHAR(50),
@@ -65,10 +66,13 @@ mysql> CREATE TABLE IF NOT EXISTS countries (
     -> );
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 
+
+//Q3. Create only the structure of a duplicate table
 mysql> CREATE TABLE dup_countries
     -> LIKE countries;
 Query OK, 0 rows affected (0.06 sec)
 
+//Q4. Create a duplicate table with structure and data
 mysql> SELECT * FROM dup_countries;
 Empty set (0.00 sec)
 
@@ -86,6 +90,7 @@ mysql> SELECT * FROM dup_countries;
 Empty set (0.00 sec)
 
 
+//Q5. Create a countries table with NULL constraints
 mysql> CREATE TABLE countries (
     ->     country_id INT NULL,
     ->     country_name VARCHAR(50) NULL,
@@ -110,6 +115,8 @@ mysql> CREATE TABLE countries_new (
     -> );
 Query OK, 0 rows affected (0.06 sec)
 
+
+//Q6. Create a jobs table with a CHECK constraint
 mysql> CREATE TABLE jobs (
     ->     job_id INT,
     ->     job_title VARCHAR(35),
@@ -132,7 +139,7 @@ mysql> desc jobs;
 
 
 
-
+//Q7. Allow only Italy, India and China
 mysql> ALTER TABLE countries
     -> ADD CONSTRAINT chk_country
     -> CHECK (country_name IN ('Italy', 'India', 'China'));
@@ -163,6 +170,7 @@ mysql> SHOW CREATE TABLE countries;
 1 row in set (0.04 sec)
 
 
+//Q8. Create job_history with a date column
 mysql> CREATE TABLE job_history (
     ->     employee_id INT,
     ->     start_date DATE,
@@ -214,6 +222,7 @@ mysql> SELECT DATE_FORMAT(end_date, '%d/%m/%Y')
 3 rows in set (0.04 sec)
 
 
+//Q9. Prevent duplicate country_id values using UNIQUE
 mysql> ALTER TABLE countries
     -> ADD CONSTRAINT uq_country_id UNIQUE (country_id);
 Query OK, 0 rows affected (0.09 sec)
@@ -250,7 +259,7 @@ mysql> SELECT * FROM countries;
 
 
 
-
+//Q10. Create jobs with DEFAULT values
 mysql> ALTER TABLE jobs
     -> MODIFY job_title VARCHAR(35) NOT NULL DEFAULT ' ',
     -> MODIFY min_salary DECIMAL(6,0) DEFAULT 8000,
@@ -282,12 +291,11 @@ mysql> SELECT * FROM jobs;
 1 row in set (0.00 sec)
 
 
-
+//Q11. Make country_id a PRIMARY KEY
 mysql> ALTER TABLE countries
     -> ADD PRIMARY KEY (country_id);
 Query OK, 0 rows affected (0.11 sec)
 Records: 0  Duplicates: 0  Warnings: 0
-mysql> ^C
 mysql> DESC countries;
 +--------------+-------------+------+-----+---------+-------+
 | Field        | Type        | Null | Key | Default | Extra |
@@ -300,19 +308,7 @@ mysql> DESC countries;
 
 
 
-
-mysql> CREATE TABLE job_history (
-    ->     employee_id INT UNIQUE,
-    ->     start_date DATE,
-    ->     end_date DATE,
-    ->     job_id VARCHAR(10),
-    ->     department_id DECIMAL(4,0),
-    ->
-    ->     FOREIGN KEY (job_id)
-    ->     REFERENCES jobs(job_id)
-    -> ) ENGINE=InnoDB;
-ERROR 1050 (42S01): Table 'job_history' already exists
-
+//Q12. Create a UNIQUE AUTO_INCREMENT column
 mysql> INSERT INTO countries (country_name, region_id)
     -> VALUES ('India', 3);
 Query OK, 1 row affected (0.04 sec)
@@ -329,6 +325,8 @@ mysql> SELECT * FROM countries;
 +------------+--------------+-----------+
 5 rows in set (0.00 sec)
 
+
+//Q13. Make the combination of two columns UNIQUE
 mysql> ALTER TABLE countries
     -> DROP CHECK chk_country;
 Query OK, 0 rows affected (0.05 sec)
@@ -340,6 +338,20 @@ mysql> ALTER TABLE countries
 Query OK, 5 rows affected (0.11 sec)
 Records: 5  Duplicates: 0  Warnings: 0
 
+
+
+//Q14. Create job_history with PRIMARY KEY and FOREIGN KEY
+mysql> CREATE TABLE job_history (
+    ->     employee_id INT UNIQUE,
+    ->     start_date DATE,
+    ->     end_date DATE,
+    ->     job_id VARCHAR(10),
+    ->     department_id DECIMAL(4,0),
+    ->
+    ->     FOREIGN KEY (job_id)
+    ->     REFERENCES jobs(job_id)
+    -> ) ENGINE=InnoDB;
+ERROR 1050 (42S01): Table 'job_history' already exists
 mysql> DROP TABLE job_history;
 Query OK, 0 rows affected (0.05 sec)
 
@@ -390,6 +402,8 @@ mysql> DESC jobs;
 4 rows in set (0.00 sec)
 
 
+
+//Q15. Create employees with a composite FOREIGN KEY
 mysql> CREATE TABLE departments (
     ->     department_id DECIMAL(4,0),
     ->     manager_id DECIMAL(6,0),
@@ -487,6 +501,8 @@ mysql> ALTER TABLE departments
 Query OK, 0 rows affected (0.09 sec)
 Records: 0  Duplicates: 0  Warnings: 0
 
+
+//Q16. Create employees with two FOREIGN KEYS
 mysql> CREATE TABLE employees16 (
     ->     employee_id INT PRIMARY KEY,
     ->     first_name VARCHAR(20),
@@ -509,8 +525,8 @@ mysql> CREATE TABLE employees16 (
 Query OK, 0 rows affected (0.08 sec)
 
 
-//
 
+//Q17. ON UPDATE CASCADE and ON DELETE RESTRICT
 mysql> CREATE TABLE employees17 (
     ->     employee_id INT PRIMARY KEY,
     ->     first_name VARCHAR(20),
@@ -538,7 +554,7 @@ mysql> desc employees17;
 5 rows in set (0.00 sec)
 
 
-
+//Q18. ON DELETE CASCADE and ON UPDATE RESTRICT
 mysql> CREATE TABLE employees18 (
     ->     employee_id INT PRIMARY KEY,
     ->     first_name VARCHAR(20),
@@ -568,7 +584,7 @@ mysql> desc employees18;
 
 
 
-
+//Q19. ON DELETE SET NULL and ON UPDATE SET NULL
 mysql> CREATE TABLE employees19 (
     ->     employee_id INT PRIMARY KEY,
     ->     first_name VARCHAR(20),
@@ -598,7 +614,7 @@ mysql> desc employees19;
 
 
 
-
+//Q20. ON DELETE NO ACTION and ON UPDATE NO ACTION
 mysql> CREATE TABLE employees20 (
     ->     employee_id INT PRIMARY KEY,
     ->     first_name VARCHAR(20),
@@ -645,5 +661,119 @@ mysql> SHOW TABLES;
 | job_history         |
 | jobs                |
 +---------------------+
+
+
+//Insert 10 employee records
+mysql> INSERT INTO employees
+    -> (employee_id, first_name, last_name, email,
+    ->  phone_number, hire_date, job_id, salary,
+    ->  commission, manager_id, department_id)
+    -> VALUES
+    -> (1, 'Aarav', 'Sharma', 'aarav@gmail.com', '9876543210',
+    ->  '2026-01-01', 'J001', 20000, NULL, 101, 10),
+    ->
+    -> (2, 'Priya', 'Verma', 'priya@gmail.com', '9876543211',
+    ->  '2026-01-02', 'J002', 28000, NULL, 102, 20),
+    ->
+    -> (3, 'Rahul', 'Patel', 'rahul@gmail.com', '9876543212',
+    ->  '2026-01-03', 'J003', 15000, NULL, 103, 30),
+    ->
+    -> (4, 'Sneha', 'Gupta', 'sneha@gmail.com', '9876543213',
+    ->  '2026-01-04', 'J004', 18000, NULL, 101, 10),
+    ->
+    -> (5, 'Rohan', 'Singh', 'rohan@gmail.com', '9876543214',
+    ->  '2026-01-05', 'J005', 14000, NULL, 102, 20),
+    ->
+    -> (6, 'Neha', 'Jain', 'neha@gmail.com', '9876543215',
+    ->  '2026-01-06', 'J006', 22000, NULL, 103, 30),
+    ->
+    -> (7, 'Karan', 'Mehta', 'karan@gmail.com', '9876543216',
+    ->  '2026-01-07', 'J007', 12000, NULL, 101, 10),
+    ->
+    -> (8, 'Pooja', 'Shah', 'pooja@gmail.com', '9876543217',
+    ->  '2026-01-08', 'J008', 21000, NULL, 102, 20),
+    ->
+    -> (9, 'Aman', 'Khan', 'aman@gmail.com', '9876543218',
+    ->  '2026-01-09', 'J009', 11000, NULL, 103, 30),
+    ->
+    -> (10, 'Simran', 'Das', 'simran@gmail.com', '9876543219',
+    ->  '2026-01-10', 'J010', 27000, NULL, 101, 10);
+Query OK, 10 rows affected (0.06 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+
+//. Display all employee records
+mysql> SELECT * FROM employees;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           3 | Rahul      | Patel     | rahul@gmail.com  | 9876543212   | 2026-01-03 | J003   | 15000.00 |       NULL |        103 |            30 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           5 | Rohan      | Singh     | rohan@gmail.com  | 9876543214   | 2026-01-05 | J005   | 14000.00 |       NULL |        102 |            20 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           7 | Karan      | Mehta     | karan@gmail.com  | 9876543216   | 2026-01-07 | J007   | 12000.00 |       NULL |        101 |            10 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|           9 | Aman       | Khan      | aman@gmail.com   | 9876543218   | 2026-01-09 | J009   | 11000.00 |       NULL |        103 |            30 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+10 rows in set (0.00 sec)
+
+//Check table structure
+mysql> DESC employees;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| employee_id   | int          | NO   | PRI | NULL    |       |
+| first_name    | varchar(20)  | YES  |     | NULL    |       |
+| last_name     | varchar(25)  | YES  |     | NULL    |       |
+| email         | varchar(50)  | YES  |     | NULL    |       |
+| phone_number  | varchar(20)  | YES  |     | NULL    |       |
+| hire_date     | date         | YES  |     | NULL    |       |
+| job_id        | varchar(10)  | YES  |     | NULL    |       |
+| salary        | decimal(8,2) | YES  |     | NULL    |       |
+| commission    | decimal(4,2) | YES  |     | NULL    |       |
+| manager_id    | decimal(6,0) | YES  |     | NULL    |       |
+| department_id | decimal(4,0) | YES  | MUL | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+//Display only employee names
+mysql> SELECT first_name, last_name
+    -> FROM employees;
++------------+-----------+
+| first_name | last_name |
++------------+-----------+
+| Aarav      | Sharma    |
+| Priya      | Verma     |
+| Rahul      | Patel     |
+| Sneha      | Gupta     |
+| Rohan      | Singh     |
+| Neha       | Jain      |
+| Karan      | Mehta     |
+| Pooja      | Shah      |
+| Aman       | Khan      |
+| Simran     | Das       |
++------------+-----------+
+10 rows in set (0.00 sec)
+
+
+//Display employees with salary greater than 15000
+mysql> SELECT * FROM employees
+    -> WHERE salary > 15000;
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+| employee_id | first_name | last_name | email            | phone_number | hire_date  | job_id | salary   | commission | manager_id | department_id |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+|           1 | Aarav      | Sharma    | aarav@gmail.com  | 9876543210   | 2026-01-01 | J001   | 20000.00 |       NULL |        101 |            10 |
+|           2 | Priya      | Verma     | priya@gmail.com  | 9876543211   | 2026-01-02 | J002   | 28000.00 |       NULL |        102 |            20 |
+|           4 | Sneha      | Gupta     | sneha@gmail.com  | 9876543213   | 2026-01-04 | J004   | 18000.00 |       NULL |        101 |            10 |
+|           6 | Neha       | Jain      | neha@gmail.com   | 9876543215   | 2026-01-06 | J006   | 22000.00 |       NULL |        103 |            30 |
+|           8 | Pooja      | Shah      | pooja@gmail.com  | 9876543217   | 2026-01-08 | J008   | 21000.00 |       NULL |        102 |            20 |
+|          10 | Simran     | Das       | simran@gmail.com | 9876543219   | 2026-01-10 | J010   | 27000.00 |       NULL |        101 |            10 |
++-------------+------------+-----------+------------------+--------------+------------+--------+----------+------------+------------+---------------+
+6 rows in set (0.04 sec)
+
+
 12 rows in set (0.00 sec)
 
